@@ -51,7 +51,7 @@ pgClient.connect();
 console.log("Verbinde mit Datenbank...");
 
 // Request vorbereiten
-app.post("http://localhost:5005/create-database", async (req, res) => {
+app.post("/create-database", async (req, res) => {
     console.log("create-database");
     const dbName = process.env.DB_NAME; // Name der Datenbank, die du erstellen möchtest
     try {
