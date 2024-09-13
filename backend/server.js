@@ -5,6 +5,7 @@ const cors = require("cors");
 const express = require("express");
 const app = express();
 const path = require("path");
+const checkToken = require("./middleware/middleware");
 
 app.use(cors());
 app.use(express.json());
@@ -47,26 +48,15 @@ pgClient.connect((err) => {
     console.log("Erfolgreich mit dem PostgreSQL-Server verbunden.");
 });
 
-// Fehlerbehandlung für nicht gefundene Routen
-app.use("*", (req, res) => {
-    res.status(404).send("404 - Seite nicht gefunden");
-});
-
 // POST-Route zum Empfangen von Wetterdaten
-app.post("/api/weather", async (req, res) => {
+app.post("/api/weather", checkToken, async (req, res) => {
     // Wetterdaten aus dem Request-Body extrahieren
-
     const { token, temperature, humidity, pressure, battery } = req.body;
     console.log("-----------------------------------------------");
     console.log(
         `Wetterdaten empfangen: Temperatur: ${temperature}°C, Luftfeuchtigkeit: ${humidity}%, Luftdruck: ${pressure}hPa, Batterie des Geräts: ${battery}%. Token lautet: ${token}`
     );
     console.log("-----------------------------------------------");
-
-    // Überprüfe, ob der Token korrekt ist
-    if (token !== process.env.DEVICE_TOKEN) {
-        return res.status(401).send("Token ungültig");
-    }
 
     // Überprüfe, ob alle Wetterdaten vorhanden sind
     if (
@@ -96,6 +86,11 @@ app.post("/api/weather", async (req, res) => {
     } */
 
     res.status(201).send(`Wetterdaten erfolgreich gespeichert`);
+});
+
+// Fehlerbehandlung für nicht gefundene Routen
+app.use("*", (req, res) => {
+    res.status(404).send("404 - Seite nicht gefunden");
 });
 
 // Starte den Server
