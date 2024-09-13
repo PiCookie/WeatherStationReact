@@ -89,6 +89,7 @@ app.post("/api/weather", checkToken, async (req, res) => {
 });
 
 // Fehlerbehandlung für nicht gefundene Routen
+// Muss am Ende aller Routen stehen
 app.use("*", (req, res) => {
     res.status(404).send("404 - Seite nicht gefunden");
 });
