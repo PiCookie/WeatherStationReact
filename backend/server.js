@@ -1,4 +1,7 @@
-const dotenv = require("dotenv");
+// Bestimme den richtigen Pfad zur .env-Datei basierend auf der Umgebung
+require("dotenv").config({
+    path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
+});
 const fs = require("fs");
 const { Client } = require("pg");
 const cors = require("cors");
@@ -11,21 +14,6 @@ app.use(cors());
 app.use(express.json());
 // Middleware zum Parsen von URL-kodierten Daten
 app.use(express.urlencoded({ extended: true }));
-
-// Bestimme den richtigen Pfad zur .env-Datei basierend auf der Umgebung
-const envFile = () => {
-    switch (process.env.NODE_ENV) {
-        case "production":
-            return "../.env.production";
-        case "development":
-            return "../.env.development";
-        case "local":
-            return "../.env.local";
-        default:
-            return "../.env"; // Fallback zur allgemeinen .env-Datei
-    }
-};
-dotenv.config({ path: path.resolve(process.cwd(), envFile()) });
 
 // Port des Servers
 const PORT = process.env.EXPRESS_PORT || 5001;
